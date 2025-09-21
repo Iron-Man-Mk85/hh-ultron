@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.0.1
+// @version        0.0.2
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+* 0.0.2 - Merge ADs modules
 * 0.0.1 - Initial release
 */
 
@@ -151,7 +152,12 @@
             const configSchema = {
                 baseKey,
                 default: false,
-                label: `Remove ADs from the game`
+                label: `Remove ADs from the game`,
+                subSettings: [{
+                    key: 'close_home',
+                    label: `Close ADs in homepage. Keep kobans collecting`,
+                    default: false
+                }]
             }
             super({name: baseKey, configSchema});
         }
@@ -162,6 +168,7 @@
             currentPage.includes('/boss-bang-battle.html') || 
             currentPage.includes('/champions-map.html') || 
             currentPage.includes('/god-path.html') || 
+            currentPage.includes('/home.html') || 
             currentPage.includes('/labyrinth.html') || 
             currentPage.includes('/labyrinth-battle.html') || 
             currentPage.includes('/labyrinth-pre-battle.html') || 
@@ -172,7 +179,7 @@
             currentPage.includes('/world-boss-battle.html')
         }
 
-        run() {
+        run(close_home) {
             if (this.hasRun || !this.shouldRun()) {return}
 
             if (currentPage.includes('/activities.html')) {
@@ -186,6 +193,8 @@
                 hideWhenSelectorAvailable('#ad_champions_map');
             } else if (currentPage.includes('/god-path.html')) {
                 hideWhenSelectorAvailable('#ad_god-path');
+            } else if (currentPage.includes('/home.html')) {
+                if (close_home) clickWhenSelectorAvailable('.become-member-text', 'close', { delay: [2000, 3000], once: false });
             } else if (currentPage.includes('/labyrinth.html')) {
                 hideWhenSelectorAvailable('#ad_labyrinth', { once: false, timeout: null });
             } else if (currentPage.includes('/labyrinth-battle.html')) {
@@ -208,13 +217,13 @@
         }
     }
 
-    class HideHomepagePopups extends HHModule {
+    class HidePopups extends HHModule {
         constructor() {
-            const baseKey = 'hideHomepagePopups'
+            const baseKey = 'hidePopups'
             const configSchema = {
                 baseKey,
                 default: false,
-                label: `Hide Popups like the shop or news from the homepage`
+                label: `Hide shop and news popups from the homepage`
             }
             super({name: baseKey, configSchema});
         }
@@ -234,35 +243,9 @@
         }
     }
 
-
-    class CloseHomepageADs extends HHModule {
-        constructor() {
-            const baseKey = 'closeHomepageADs'
-            const configSchema = {
-                baseKey,
-                default: false,
-                label: `Close ADs in homepage. Keeps kobans collecting`
-            }
-            super({name: baseKey, configSchema});
-        }
-
-        shouldRun() {
-            return currentPage.includes('/home.html')
-        }
-
-        run() {
-            if (this.hasRun || !this.shouldRun()) {return}
-
-            clickWhenSelectorAvailable('.become-member-text', 'close', { delay: [2000, 3000], once: false });
-
-            this.hasRun = true
-        }
-    }
-
     const allModules = [
         new RemoveADs(),
-        new HideHomepagePopups(),
-        new CloseHomepageADs()
+        new HidePopups()
     ]
 
     setTimeout(() => {
