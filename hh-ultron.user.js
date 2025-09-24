@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.0.3
+// @version        0.0.4
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+- 0.0.4 - Add harem AD removal
 * 0.0.3 - Add love raids AD removal
 * 0.0.2 - Merge ADs modules
 * 0.0.1 - Initial release
@@ -169,6 +170,7 @@
             currentPage.includes('/boss-bang-battle.html') || 
             currentPage.includes('/champions-map.html') || 
             currentPage.includes('/god-path.html') || 
+            (/\/characters\/\d+$/.test(currentPage)) || 
             currentPage.includes('/home.html') || 
             currentPage.includes('/labyrinth.html') || 
             currentPage.includes('/labyrinth-battle.html') || 
@@ -195,6 +197,8 @@
                 hideWhenSelectorAvailable('#ad_champions_map');
             } else if (currentPage.includes('/god-path.html')) {
                 hideWhenSelectorAvailable('#ad_god-path');
+            } else if (/\/characters\/\d+$/.test(currentPage)) {
+                hideWhenSelectorAvailable('#ad_harem');
             } else if (currentPage.includes('/home.html')) {
                 if (close_home) clickWhenSelectorAvailable('.become-member-text', 'close', { delay: [2000, 3000], once: false });
             } else if (currentPage.includes('/labyrinth.html')) {
