@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.0.4
+// @version        0.0.5
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+- 0.0.5 - Add season AD removal
 - 0.0.4 - Add harem AD removal
 * 0.0.3 - Add love raids AD removal
 * 0.0.2 - Merge ADs modules
@@ -177,6 +178,7 @@
             currentPage.includes('/labyrinth-pre-battle.html') || 
             currentPage.includes('/love-raids.html') || 
             currentPage.includes('/pantheon-battle.html') || 
+            currentPage.includes('/season.html') || 
             currentPage.includes('/season-battle.html') || 
             currentPage.includes('/shop.html') || 
             currentPage.includes('/troll-battle.html') || 
@@ -212,6 +214,8 @@
                 removeClassWhenSelectorAvailable('.height-for-ad', 'height-for-ad', { once: false });
             } else if (currentPage.includes('/pantheon-battle.html')) {
                 hideWhenSelectorAvailable('#ad_battle');
+            } else if (currentPage.includes('/season.html')) {
+                hideWhenSelectorAvailable('#ad_season');
             } else if (currentPage.includes('/season-battle.html')) {
                 hideWhenSelectorAvailable('#ad_battle');
             } else if (currentPage.includes('/shop.html')) {
