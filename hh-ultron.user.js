@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.0.5
+// @version        0.1.0
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+- 0.1.0 - Add close popups module, tooltips for hide/close popups modules
 - 0.0.5 - Add season AD removal
 - 0.0.4 - Add harem AD removal
 * 0.0.3 - Add love raids AD removal
@@ -107,6 +108,18 @@
             };
             if (Number.isFinite(delay) && delay > 0) setTimeout(hide, delay);
             else hide();
+        }, { once, timeout });
+    }
+
+    function closeTargetWhenTriggerAvailableInsideContainer(triggerSelector, { containerSelector = triggerSelector, targetSelector = '.closable', once = true, timeout = 5000, delay = 0 } = {}) {
+        observeUntil(triggerSelector, () => {
+            const clickFn = () => {
+                document.querySelectorAll(`${containerSelector} ${targetSelector}`).forEach(el => {
+                    if (el && el.isConnected) el.click();
+                });
+            };
+            if (Number.isFinite(delay) && delay > 0) setTimeout(clickFn, delay);
+            else clickFn();
         }, { once, timeout });
     }
 
@@ -202,7 +215,7 @@
             } else if (/\/characters\/\d+$/.test(currentPage)) {
                 hideWhenSelectorAvailable('#ad_harem');
             } else if (currentPage.includes('/home.html')) {
-                if (close_home) clickWhenSelectorAvailable('.become-member-text', 'close', { delay: [2000, 3000], once: false });
+                if (close_home) clickWhenSelectorAvailable('.become-member-text', 'close', { delay: [500, 1500], once: false });
             } else if (currentPage.includes('/labyrinth.html')) {
                 hideWhenSelectorAvailable('#ad_labyrinth', { once: false, timeout: null });
             } else if (currentPage.includes('/labyrinth-battle.html')) {
@@ -236,7 +249,7 @@
             const configSchema = {
                 baseKey,
                 default: false,
-                label: `Hide shop and news popups from the homepage`
+                label: `<span tooltip="safe for game, but can hide something more. use either this OR 'Close popups from'">Hide shop and news popups from the homepage</span>`,
             }
             super({name: baseKey, configSchema});
         }
@@ -256,9 +269,50 @@
         }
     }
 
+    class ClosePopups extends HHModule {
+        constructor() {
+            const baseKey = 'closePopups'
+            const configSchema = {
+                baseKey,
+                default: false,
+                label: `<span tooltip="more precise and you can select all the options you want. makes a click on the X to close. use either this OR the 'Hide' one">Close popups from:</span>`,
+                subSettings: [{
+                    key: 'homepage',
+                    label: `Homepage`,
+                    default: true
+                }, {
+                    key: 'season',
+                    label: `Season`,
+                    default: true,
+                }]
+            }
+            super({name: baseKey, configSchema});
+        }
+
+        shouldRun() {
+            return currentPage.includes('/home.html') || currentPage.includes('/season.html')
+        }
+
+        run({ homepage, season }) {
+            if (this.hasRun || !this.shouldRun()) {return}
+
+            if (currentPage.includes('/home.html') && homepage) {
+                closeTargetWhenTriggerAvailableInsideContainer('#no_HC', { timeout: 2000, delay: 250 });
+                closeTargetWhenTriggerAvailableInsideContainer('#news_details_popup', { targetSelector: '.back_button', timeout: 2000, delay: 250 });
+                closeTargetWhenTriggerAvailableInsideContainer('#popup_news', { timeout: 2000, delay: 250 });
+                closeTargetWhenTriggerAvailableInsideContainer('#trial_monthly_card_popup', { timeout: 2000, delay: 250 });
+            } else if (currentPage.includes('/season.html') && season) {
+                closeTargetWhenTriggerAvailableInsideContainer('#pass_reminder_popup', { timeout: 2000, delay: 250 });
+            }
+
+            this.hasRun = true
+        }
+    }
+
     const allModules = [
         new RemoveADs(),
-        new HidePopups()
+        new HidePopups(),
+        new ClosePopups()
     ]
 
     setTimeout(() => {
