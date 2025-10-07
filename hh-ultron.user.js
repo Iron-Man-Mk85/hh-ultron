@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.1.1
+// @version        0.1.2
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,13 +19,14 @@
 /* =================
 *  =   Changelog   =
 *  =================
-- 0.1.1 - Add random delay
-- 0.1.0 - Add close popups module, tooltips for hide/close popups modules
-- 0.0.5 - Add season AD removal
-- 0.0.4 - Add harem AD removal
-* 0.0.3 - Add love raids AD removal
-* 0.0.2 - Merge ADs modules
-* 0.0.1 - Initial release
+*  0.1.2 - Add league battle AD removal
+*  0.1.1 - Add random delay
+*  0.1.0 - Add close popups module, tooltips for hide/close popups modules
+*  0.0.5 - Add season AD removal
+*  0.0.4 - Add harem AD removal
+*  0.0.3 - Add love raids AD removal
+*  0.0.2 - Merge ADs modules
+*  0.0.1 - Initial release
 */
 
 (function() {
@@ -190,6 +191,7 @@
             currentPage.includes('/labyrinth.html') || 
             currentPage.includes('/labyrinth-battle.html') || 
             currentPage.includes('/labyrinth-pre-battle.html') || 
+            currentPage.includes('/league-battle.html') || 
             currentPage.includes('/love-raids.html') || 
             currentPage.includes('/pantheon-battle.html') || 
             currentPage.includes('/season.html') || 
@@ -223,6 +225,8 @@
                 hideWhenSelectorAvailable('#ad_battle');
             } else if (currentPage.includes('/labyrinth-pre-battle.html')) {
                 hideWhenSelectorAvailable('#ad_labyrinth-pre-battle', { once: false });
+            } else if (currentPage.includes('/league-battle.html')) {
+                hideWhenSelectorAvailable('#ad_battle');
             } else if (currentPage.includes('/love-raids.html')) {
                 hideWhenSelectorAvailable('#ad_love_raids');
                 removeClassWhenSelectorAvailable('.height-for-ad', 'height-for-ad', { once: false });
