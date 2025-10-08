@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.1.2
+// @version        0.2.0
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.2.0 - Add Daddyrinth relic auto confirmation module
 *  0.1.2 - Add league battle AD removal
 *  0.1.1 - Add random delay
 *  0.1.0 - Add close popups module, tooltips for hide/close popups modules
@@ -314,10 +315,35 @@
         }
     }
 
+    class DaddyrinthRelicAutoConfirm extends HHModule {
+        constructor() {
+            const baseKey = 'daddyrinthRelicAutoConfirm'
+            const configSchema = {
+                baseKey,
+                default: false,
+                label: `Auto close Daddyrinth relic confirmation popup`,
+            }
+            super({name: baseKey, configSchema});
+        }
+
+        shouldRun() {
+            return currentPage.includes('/labyrinth.html')
+        }
+
+        run() {
+            if (this.hasRun || !this.shouldRun()) {return}
+
+            closeTargetWhenTriggerAvailableInsideContainer('.claim-relic', { targetSelector: '#close-relic-popup', timeout: null, delay: [50,150] });
+
+            this.hasRun = true
+        }
+    }
+
     const allModules = [
         new RemoveADs(),
         new HidePopups(),
-        new ClosePopups()
+        new ClosePopups(),
+        new DaddyrinthRelicAutoConfirm()
     ]
 
     setTimeout(() => {
