@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.2.0
+// @version        0.2.1
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.2.1 - Edit AutoConfirm module for broader usage
 *  0.2.0 - Add Daddyrinth relic auto confirmation module
 *  0.1.2 - Add league battle AD removal
 *  0.1.1 - Add random delay
@@ -296,7 +297,8 @@
         }
 
         shouldRun() {
-            return currentPage.includes('/home.html') || currentPage.includes('/season.html')
+            return currentPage.includes('/home.html') ||
+            currentPage.includes('/season.html')
         }
 
         run({ homepage, season }) {
@@ -307,6 +309,7 @@
                 closeTargetWhenTriggerAvailableInsideContainer('#news_details_popup', { targetSelector: '.back_button', timeout: 2000, delay: [250,300] });
                 closeTargetWhenTriggerAvailableInsideContainer('#popup_news', { timeout: 2000, delay: [250,300] });
                 closeTargetWhenTriggerAvailableInsideContainer('#trial_monthly_card_popup', { timeout: 2000, delay: [250,300] });
+                closeTargetWhenTriggerAvailableInsideContainer('#unique_deal_popup', { timeout: 2000, delay: [250,300] });
             } else if (currentPage.includes('/season.html') && season) {
                 closeTargetWhenTriggerAvailableInsideContainer('#pass_reminder_popup', { timeout: 2000, delay: [250,300] });
             }
@@ -315,25 +318,53 @@
         }
     }
 
-    class DaddyrinthRelicAutoConfirm extends HHModule {
+    class AutoConfirm extends HHModule {
         constructor() {
-            const baseKey = 'daddyrinthRelicAutoConfirm'
+            const baseKey = 'AutoConfirm'
             const configSchema = {
                 baseKey,
                 default: false,
-                label: `Auto close Daddyrinth relic confirmation popup`,
+                label: `Close specific on screen windows:`,
+                subSettings: [{
+                    key: 'daddyrinthRelic',
+                    label: `Daddyrinth relic confirmation`,
+                    default: false
+                }, {
+                    key: 'leagueWin',
+                    label: `League win confirmation`,
+                    default: false
+                // }, {
+                //     key: 'leagueLoss',
+                //     label: `League loss confirmation`,
+                //     default: false
+                }, {
+                    key: 'pantheonLoss',
+                    label: `Pantheon loss confirmation`,
+                    default: false
+                }]
             }
             super({name: baseKey, configSchema});
         }
 
         shouldRun() {
-            return currentPage.includes('/labyrinth.html')
+            return currentPage.includes('/labyrinth.html') ||
+            currentPage.includes('/leagues.html') ||
+            currentPage.includes('/league-battle.html') ||
+            currentPage.includes('/pantheon-battle.html')
         }
 
-        run() {
+        run({ daddyrinthRelic, leagueWin, leagueLoss, pantheonLoss }) {
             if (this.hasRun || !this.shouldRun()) {return}
 
-            closeTargetWhenTriggerAvailableInsideContainer('.claim-relic', { targetSelector: '#close-relic-popup', timeout: null, delay: [50,150] });
+            if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
+                closeTargetWhenTriggerAvailableInsideContainer('.claim-relic', { targetSelector: '#close-relic-popup', timeout: null, delay: [50,150] });
+            } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueWin) {
+                closeTargetWhenTriggerAvailableInsideContainer('#reward_holder', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', once: false, timeout: null, delay: [50,150] });
+            // } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueLoss) {
+            //     closeTargetWhenTriggerAvailableInsideContainer('#upgrade_characters', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', once: false, timeout: null, delay: [50,150] });
+            } else if (currentPage.includes('/pantheon-battle.html') && pantheonLoss) {
+                closeTargetWhenTriggerAvailableInsideContainer('.lost-first-row', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', timeout: null, delay: [50,150] });
+            }
 
             this.hasRun = true
         }
@@ -343,7 +374,7 @@
         new RemoveADs(),
         new HidePopups(),
         new ClosePopups(),
-        new DaddyrinthRelicAutoConfirm()
+        new AutoConfirm()
     ]
 
     setTimeout(() => {
