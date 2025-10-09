@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.2.1
+// @version        0.3.0
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.0 - Add SpacebarHelp module
 *  0.2.1 - Edit AutoConfirm module for broader usage
 *  0.2.0 - Add Daddyrinth relic auto confirmation module
 *  0.1.2 - Add league battle AD removal
@@ -156,6 +157,26 @@
                 if (once) hasClicked = true; // prevent retriggers
             }
         }, { timeout, once });
+    }
+
+    function clickOnElement(el) {
+        const rect = el.getBoundingClientRect();
+        const posX = rect.left + rect.width / 2;
+        const posY = rect.top + rect.height / 2;
+        el.dispatchEvent(new MouseEvent('click', {
+            bubbles: true,
+            clientX: posX, clientY: posY,
+            screenX: posX, screenY: posY}));
+    }
+
+    function spacebarToClick(selector, elementToClick) {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.code === 'Space') {
+                e.preventDefault();
+                const el = document.querySelector(`${selector} ${elementToClick}`);
+                if (el) clickOnElement(el);
+            }
+        });
     }
 
     class HHModule {
@@ -320,7 +341,7 @@
 
     class AutoConfirm extends HHModule {
         constructor() {
-            const baseKey = 'AutoConfirm'
+            const baseKey = 'autoConfirm'
             const configSchema = {
                 baseKey,
                 default: false,
@@ -370,11 +391,51 @@
         }
     }
 
+    class SpacebarHelp extends HHModule {
+        constructor() {
+            const baseKey = 'spacebarHelp'
+            const configSchema = {
+                baseKey,
+                default: false,
+                label: `Use spacebar to close:`,
+                subSettings: [{
+                    key: 'daddyrinthRelic',
+                    label: `Daddyrinth relic confirmation`,
+                    default: false
+                }, {
+                    key: 'leagueBattle',
+                    label: `League battle confirmation`,
+                    default: false
+                }]
+            }
+            super({name: baseKey, configSchema});
+        }
+
+        shouldRun() {
+            return currentPage.includes('/labyrinth.html') ||
+            currentPage.includes('/leagues.html') ||
+            currentPage.includes('/league-battle.html')
+        }
+
+        run({ daddyrinthRelic, leagueWin, leagueLoss, pantheonLoss }) {
+            if (this.hasRun || !this.shouldRun()) {return}
+
+            if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
+                spacebarToClick('#close-relic-popup', '.claim-relic');
+            } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueWin) {
+                spacebarToClick('#rewards_popup', '.blue_button_L');
+            }
+
+            this.hasRun = true
+        }
+    }
+
     const allModules = [
         new RemoveADs(),
         new HidePopups(),
         new ClosePopups(),
-        new AutoConfirm()
+        new AutoConfirm(),
+        new SpacebarHelp()
     ]
 
     setTimeout(() => {
