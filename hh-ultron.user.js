@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.3.0
+// @version        0.3.1
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.1 - Update SpacebarHelp
 *  0.3.0 - Add SpacebarHelp module
 *  0.2.1 - Edit AutoConfirm module for broader usage
 *  0.2.0 - Add Daddyrinth relic auto confirmation module
@@ -403,8 +404,16 @@
                     label: `Daddyrinth relic confirmation`,
                     default: false
                 }, {
+                    key: 'daddyrinthBattle',
+                    label: `Daddyrinth "perform and skip", rewards (only if won)`,
+                    default: false
+                }, {
                     key: 'leagueBattle',
                     label: `League battle confirmation`,
+                    default: false
+                }, {
+                    key: 'activitiesReward',
+                    label: `Rewards in Activities page`,
                     default: false
                 }]
             }
@@ -413,16 +422,26 @@
 
         shouldRun() {
             return currentPage.includes('/labyrinth.html') ||
+            currentPage.includes('/labyrinth-pre-battle.html') ||
+            currentPage.includes('/labyrinth-battle.html') ||
             currentPage.includes('/leagues.html') ||
-            currentPage.includes('/league-battle.html')
+            currentPage.includes('/league-battle.html') ||
+            currentPage.includes('/activities.html')
         }
 
-        run({ daddyrinthRelic, leagueWin, leagueLoss, pantheonLoss }) {
+        run({ daddyrinthRelic, daddyrinthBattle, activitiesReward }) {
             if (this.hasRun || !this.shouldRun()) {return}
 
             if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
-                spacebarToClick('#close-relic-popup', '.claim-relic');
+                spacebarToClick('#labyrinth_reward_popup', '#close-relic-popup');
+                spacebarToClick('#rewards_popup', '.blue_button_L');
+                spacebarToClick('#confirmation_popup', '#popup_confirm');
+            } else if (currentPage.includes('/labyrinth-pre-battle.html') || currentPage.includes('/labyrinth-battle.html') && daddyrinthBattle) {
+                spacebarToClick('#pre-battle', '.blue_button_L:nth-of-type(2)');
+                spacebarToClick('#rewards_popup', '.blue_button_L');
             } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueWin) {
+                spacebarToClick('#rewards_popup', '.blue_button_L');
+            } else if (currentPage.includes('/activities.html') && activitiesReward) {
                 spacebarToClick('#rewards_popup', '.blue_button_L');
             }
 
