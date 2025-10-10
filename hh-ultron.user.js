@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.3.1
+// @version        0.3.2
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.2 - Update SpacebarHelp
 *  0.3.1 - Update SpacebarHelp
 *  0.3.0 - Add SpacebarHelp module
 *  0.2.1 - Edit AutoConfirm module for broader usage
@@ -401,11 +402,11 @@
                 label: `Use spacebar to close:`,
                 subSettings: [{
                     key: 'daddyrinthRelic',
-                    label: `Daddyrinth relic confirmation`,
+                    label: `Daddyrinth flow confirmations`,
                     default: false
                 }, {
                     key: 'daddyrinthBattle',
-                    label: `Daddyrinth "perform and skip", rewards (only if won)`,
+                    label: `Daddyrinth MM-perform_and_skip, rewards (only if won)`,
                     default: false
                 }, {
                     key: 'leagueBattle',
@@ -436,6 +437,7 @@
                 spacebarToClick('#labyrinth_reward_popup', '#close-relic-popup');
                 spacebarToClick('#rewards_popup', '.blue_button_L');
                 spacebarToClick('#confirmation_popup', '#popup_confirm');
+                spacebarToClick('#heal_girl_labyrinth_popup', '.blue_button_L');
             } else if (currentPage.includes('/labyrinth-pre-battle.html') || currentPage.includes('/labyrinth-battle.html') && daddyrinthBattle) {
                 spacebarToClick('#pre-battle', '.blue_button_L:nth-of-type(2)');
                 spacebarToClick('#rewards_popup', '.blue_button_L');
