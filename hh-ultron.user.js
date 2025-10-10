@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.3.2
+// @version        0.3.3
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.3 - Missing parentheses caused bug
 *  0.3.2 - Update SpacebarHelp
 *  0.3.1 - Update SpacebarHelp
 *  0.3.0 - Add SpacebarHelp module
@@ -381,7 +382,7 @@
 
             if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
                 closeTargetWhenTriggerAvailableInsideContainer('.claim-relic', { targetSelector: '#close-relic-popup', timeout: null, delay: [50,150] });
-            } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueWin) {
+            } else if ((currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html')) && leagueWin) {
                 closeTargetWhenTriggerAvailableInsideContainer('#reward_holder', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', once: false, timeout: null, delay: [50,150] });
             // } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueLoss) {
             //     closeTargetWhenTriggerAvailableInsideContainer('#upgrade_characters', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', once: false, timeout: null, delay: [50,150] });
@@ -438,10 +439,10 @@
                 spacebarToClick('#rewards_popup', '.blue_button_L');
                 spacebarToClick('#confirmation_popup', '#popup_confirm');
                 spacebarToClick('#heal_girl_labyrinth_popup', '.blue_button_L');
-            } else if (currentPage.includes('/labyrinth-pre-battle.html') || currentPage.includes('/labyrinth-battle.html') && daddyrinthBattle) {
+            } else if ((currentPage.includes('/labyrinth-pre-battle.html') || currentPage.includes('/labyrinth-battle.html')) && daddyrinthBattle) {
                 spacebarToClick('#pre-battle', '.blue_button_L:nth-of-type(2)');
                 spacebarToClick('#rewards_popup', '.blue_button_L');
-            } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueWin) {
+            } else if ((currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html')) && leagueWin) {
                 spacebarToClick('#rewards_popup', '.blue_button_L');
             } else if (currentPage.includes('/activities.html') && activitiesReward) {
                 spacebarToClick('#rewards_popup', '.blue_button_L');
