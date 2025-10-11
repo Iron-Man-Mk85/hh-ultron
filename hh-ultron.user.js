@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.3.3
+// @version        0.3.4
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.4 - Fix wrong variable name
 *  0.3.3 - Missing parentheses caused bug
 *  0.3.2 - Update SpacebarHelp
 *  0.3.1 - Update SpacebarHelp
@@ -377,7 +378,7 @@
             currentPage.includes('/pantheon-battle.html')
         }
 
-        run({ daddyrinthRelic, leagueWin, leagueLoss, pantheonLoss }) {
+        run({ daddyrinthRelic, leagueWin, pantheonLoss }) {
             if (this.hasRun || !this.shouldRun()) {return}
 
             if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
@@ -431,7 +432,7 @@
             currentPage.includes('/activities.html')
         }
 
-        run({ daddyrinthRelic, daddyrinthBattle, activitiesReward }) {
+        run({ daddyrinthRelic, daddyrinthBattle, leagueBattle, activitiesReward }) {
             if (this.hasRun || !this.shouldRun()) {return}
 
             if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
@@ -442,7 +443,7 @@
             } else if ((currentPage.includes('/labyrinth-pre-battle.html') || currentPage.includes('/labyrinth-battle.html')) && daddyrinthBattle) {
                 spacebarToClick('#pre-battle', '.blue_button_L:nth-of-type(2)');
                 spacebarToClick('#rewards_popup', '.blue_button_L');
-            } else if ((currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html')) && leagueWin) {
+            } else if ((currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html')) && leagueBattle) {
                 spacebarToClick('#rewards_popup', '.blue_button_L');
             } else if (currentPage.includes('/activities.html') && activitiesReward) {
                 spacebarToClick('#rewards_popup', '.blue_button_L');
