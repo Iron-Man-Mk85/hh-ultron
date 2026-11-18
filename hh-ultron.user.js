@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.3.4
+// @version        0.3.5
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.5 - Fix popup dismissal, spacebar shortcuts, and the homepage ad setting
 *  0.3.4 - Fix wrong variable name
 *  0.3.3 - Missing parentheses caused bug
 *  0.3.2 - Update SpacebarHelp
@@ -42,6 +43,7 @@
     const { $, location } = window;
     const currentPage = location.pathname;
     const tab = location.search;
+    const rewardButton = 'button.blue_button_L[confirm_blue_button]';
 
     if (!$) {
         console.log('WARNING: No jQuery found. Probably an error page. Ending the script here')
@@ -108,28 +110,82 @@
         }, { timeout, once });
     }
 
-    function hideTargetWhenTriggerAvailable(triggerSelector, targetSelector, { once = true, timeout = 5000, delay = 0 } = {}) {
-        observeUntil(triggerSelector, () => {
-            const hide = () => {
-                document.querySelectorAll(targetSelector).forEach(el => {
-                    if (el && el.isConnected) el.style.display = 'none';
-                });
-            };
-            if (Number.isFinite(delay) && delay > 0) setTimeout(hide, delay);
-            else hide();
-        }, { once, timeout });
+    function isVisible(el) {
+        return !!(el?.isConnected && el.getClientRects().length &&
+            !el.closest('[hidden], [inert], [aria-hidden="true"]') && getComputedStyle(el).visibility === 'visible');
     }
 
-    function closeTargetWhenTriggerAvailableInsideContainer(triggerSelector, { containerSelector = triggerSelector, targetSelector = '.closable', once = true, timeout = 5000, delay = 0 } = {}) {
-        observeUntil(triggerSelector, () => {
-            const clickFn = () => {
-                document.querySelectorAll(`${containerSelector} ${targetSelector}`).forEach(el => {
-                    if (el && el.isConnected) el.click();
-                });
+    function isClickable(el) {
+        return isVisible(el) && !el.matches(':disabled, .disabled, [aria-disabled="true"]');
+    }
+
+    function getClickDelay(delay) {
+        return Array.isArray(delay)
+            ? Math.floor(Math.random() * (delay[1] - delay[0] + 1)) + delay[0]
+            : delay;
+    }
+
+    function closeTargetWhenTriggerAvailableInsideContainer(containerSelector, { triggerSelector, targetSelector = '.closable', once = true, timeout = 5000, delay = 0 } = {}) {
+        let container = null;
+        let activePopup = null;
+        let clicked = false;
+        let pending = null;
+        let expiry = null;
+
+        const getActivePopup = () => {
+            const popup = document.querySelector(containerSelector);
+            if (!isVisible(popup)) return null;
+            if (triggerSelector && !Array.from(popup.querySelectorAll(triggerSelector)).some(isVisible)) return null;
+            return popup;
+        };
+
+        const getTarget = (popup) => {
+            const targets = Array.from(popup.querySelectorAll(targetSelector)).filter(isClickable);
+            return targets.length === 1 ? targets[0] : null;
+        };
+
+        const check = () => {
+            container = document.querySelector(containerSelector);
+            const popup = getActivePopup();
+            if (popup !== activePopup) {
+                clearTimeout(pending);
+                pending = null;
+                clicked = false;
+                activePopup = popup;
+            }
+            if (!popup || clicked || pending !== null || !getTarget(popup)) return;
+
+            const click = () => {
+                pending = null;
+                if (getActivePopup() !== popup) return;
+                const target = getTarget(popup);
+                if (!target) return;
+
+                clicked = true;
+                if (once) {
+                    observer.disconnect();
+                    clearTimeout(expiry);
+                }
+                target.click();
             };
-            if (Number.isFinite(delay) && delay > 0) setTimeout(clickFn, delay);
-            else clickFn();
-        }, { once, timeout });
+
+            const computedDelay = getClickDelay(delay);
+            if (computedDelay > 0) pending = setTimeout(click, computedDelay);
+            else click();
+        };
+
+        const observer = new MutationObserver((mutations) => {
+            const current = document.querySelector(containerSelector);
+            if (current !== container || (current && mutations.some(({ target }) => current.contains(target) || target.contains(current)))) check();
+        });
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class', 'style', 'hidden', 'inert', 'aria-hidden', 'disabled', 'aria-disabled']
+        });
+        if (Number.isFinite(timeout) && timeout > 0) expiry = setTimeout(() => observer.disconnect(), timeout);
+        check();
     }
 
     function removeClassWhenSelectorAvailable(selector, classToRemove, { once = true, timeout = 5000 } = {}) {
@@ -139,46 +195,49 @@
     }
 
     function clickWhenSelectorAvailable(selector, elementToClick, { delay = 2000, once = true, timeout = 5000 } = {}) {
+        let pending = false;
         let hasClicked = false;
 
         observeUntil(selector, () => {
-            if (hasClicked) return;
+            if (hasClicked || pending) return;
 
             const closeElement = document.querySelector(elementToClick);
-            if (closeElement) {
-                // allow `delay` to be a number or an array [min, max]
-                const computedDelay = (Array.isArray(delay) && delay.length >= 2)
-                    ? Math.floor(Math.random() * (delay[1] - delay[0] + 1)) + delay[0]
-                    : Number(delay) || 0;
-
+            if (isClickable(closeElement)) {
+                pending = true;
                 setTimeout(() => {
-                    if (!hasClicked && closeElement.isConnected) {
-                        closeElement.click();
+                    pending = false;
+                    if (isClickable(closeElement) && Array.from(document.querySelectorAll(selector)).some(isVisible)) {
                         hasClicked = true;
+                        closeElement.click();
                     }
-                }, computedDelay);
-
-                if (once) hasClicked = true; // prevent retriggers
+                }, getClickDelay(delay));
             }
         }, { timeout, once });
     }
 
-    function clickOnElement(el) {
-        const rect = el.getBoundingClientRect();
-        const posX = rect.left + rect.width / 2;
-        const posY = rect.top + rect.height / 2;
-        el.dispatchEvent(new MouseEvent('click', {
-            bubbles: true,
-            clientX: posX, clientY: posY,
-            screenX: posX, screenY: posY}));
-    }
-
-    function spacebarToClick(selector, elementToClick) {
+    function spacebarToClick(selectors) {
         document.addEventListener('keydown', (e) => {
-            if (e.key === ' ' || e.code === 'Space') {
+            if (e.key !== ' ' && e.code !== 'Space') return;
+            if (e.defaultPrevented || e.repeat || e.isComposing || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+            if (e.target?.closest?.('input, textarea, select, button, a[href], [role="button"], [contenteditable]:not([contenteditable="false"])')) return;
+
+            for (const { selector, triggerSelector } of selectors) {
+                if (triggerSelector && !Array.from(document.querySelectorAll(triggerSelector)).some(isVisible)) continue;
+                const targets = Array.from(document.querySelectorAll(selector)).filter(isClickable);
+                if (targets.length !== 1) continue;
+
+                const [el] = targets;
+                const rect = el.getBoundingClientRect();
+                const posX = rect.left + rect.width / 2;
+                const posY = rect.top + rect.height / 2;
+                if (!el.contains(document.elementFromPoint(posX, posY))) continue;
+
                 e.preventDefault();
-                const el = document.querySelector(`${selector} ${elementToClick}`);
-                if (el) clickOnElement(el);
+                el.dispatchEvent(new MouseEvent('click', {
+                    bubbles: true,
+                    clientX: posX, clientY: posY,
+                    screenX: posX, screenY: posY}));
+                return;
             }
         });
     }
@@ -228,7 +287,7 @@
             currentPage.includes('/world-boss-battle.html')
         }
 
-        run(close_home) {
+        run({ close_home }) {
             if (this.hasRun || !this.shouldRun()) {return}
 
             if (currentPage.includes('/activities.html')) {
@@ -281,7 +340,7 @@
             const configSchema = {
                 baseKey,
                 default: false,
-                label: `<span tooltip="safe for game, but can hide something more. looks for 2 seconds and hides the whole popup container. use either this OR 'Close popups from'">Hide shop and news popups from the homepage</span>`,
+                label: `<span tooltip="Dismisses these popups if they open during the first 2 seconds. Use either this or 'Close popups from'.">Hide shop and news popups from the homepage</span>`,
             }
             super({name: baseKey, configSchema});
         }
@@ -293,9 +352,9 @@
         run() {
             if (this.hasRun || !this.shouldRun()) {return}
 
-            hideTargetWhenTriggerAvailable('#no_HC', '#common-popups', { timeout: 2000 });
-            hideTargetWhenTriggerAvailable('#news_details_popup', '#common-popups', { timeout: 2000 });
-            hideTargetWhenTriggerAvailable('#popup_news', '#common-popups', { timeout: 2000 });
+            closeTargetWhenTriggerAvailableInsideContainer('#no_HC', { timeout: 2000 });
+            closeTargetWhenTriggerAvailableInsideContainer('#news_details_popup', { targetSelector: '.back_button', timeout: 2000 });
+            closeTargetWhenTriggerAvailableInsideContainer('#popup_news', { timeout: 2000 });
 
             this.hasRun = true
         }
@@ -382,13 +441,13 @@
             if (this.hasRun || !this.shouldRun()) {return}
 
             if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
-                closeTargetWhenTriggerAvailableInsideContainer('.claim-relic', { targetSelector: '#close-relic-popup', timeout: null, delay: [50,150] });
+                closeTargetWhenTriggerAvailableInsideContainer('#labyrinth_reward_popup', { targetSelector: '#close-relic-popup', timeout: null, delay: [50,150] });
             } else if ((currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html')) && leagueWin) {
-                closeTargetWhenTriggerAvailableInsideContainer('#reward_holder', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', once: false, timeout: null, delay: [50,150] });
+                closeTargetWhenTriggerAvailableInsideContainer('#rewards_popup', { triggerSelector: '#reward_holder', targetSelector: rewardButton, once: false, timeout: null, delay: [50,150] });
             // } else if (currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html') && leagueLoss) {
-            //     closeTargetWhenTriggerAvailableInsideContainer('#upgrade_characters', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', once: false, timeout: null, delay: [50,150] });
+            //     closeTargetWhenTriggerAvailableInsideContainer('#rewards_popup', { triggerSelector: '#upgrade_characters', targetSelector: rewardButton, once: false, timeout: null, delay: [50,150] });
             } else if (currentPage.includes('/pantheon-battle.html') && pantheonLoss) {
-                closeTargetWhenTriggerAvailableInsideContainer('.lost-first-row', { containerSelector: '#rewards_popup', targetSelector: '.blue_button_L', timeout: null, delay: [50,150] });
+                closeTargetWhenTriggerAvailableInsideContainer('#rewards_popup', { triggerSelector: '.lost-first-row', targetSelector: rewardButton, timeout: null, delay: [50,150] });
             }
 
             this.hasRun = true
@@ -436,17 +495,20 @@
             if (this.hasRun || !this.shouldRun()) {return}
 
             if (currentPage.includes('/labyrinth.html') && daddyrinthRelic) {
-                spacebarToClick('#labyrinth_reward_popup', '#close-relic-popup');
-                spacebarToClick('#rewards_popup', '.blue_button_L');
-                spacebarToClick('#confirmation_popup', '#popup_confirm');
-                spacebarToClick('#heal_girl_labyrinth_popup', '.blue_button_L');
+                spacebarToClick([
+                    { selector: '#labyrinth_reward_popup #close-relic-popup' },
+                    { selector: `#rewards_popup ${rewardButton}` },
+                    { selector: '#heal_girl_labyrinth_popup button.blue_button_L' }
+                ]);
             } else if ((currentPage.includes('/labyrinth-pre-battle.html') || currentPage.includes('/labyrinth-battle.html')) && daddyrinthBattle) {
-                spacebarToClick('#pre-battle', '.blue_button_L:nth-of-type(2)');
-                spacebarToClick('#rewards_popup', '.blue_button_L');
+                spacebarToClick([
+                    { selector: `#rewards_popup ${rewardButton}`, triggerSelector: '#rewards_popup #reward_holder' },
+                    { selector: '#pre-battle .blue_button_L:nth-of-type(2)' }
+                ]);
             } else if ((currentPage.includes('/leagues.html') || currentPage.includes('/league-battle.html')) && leagueBattle) {
-                spacebarToClick('#rewards_popup', '.blue_button_L');
+                spacebarToClick([{ selector: `#rewards_popup ${rewardButton}` }]);
             } else if (currentPage.includes('/activities.html') && activitiesReward) {
-                spacebarToClick('#rewards_popup', '.blue_button_L');
+                spacebarToClick([{ selector: `#rewards_popup ${rewardButton}` }]);
             }
 
             this.hasRun = true
@@ -462,28 +524,24 @@
     ]
 
     setTimeout(() => {
-        if (window.HHPlusPlus) {
-            const runScript = () => {
-                const { hhPlusPlusConfig } = window
+        const runScript = () => {
+            const { hhPlusPlusConfig } = window
 
-                hhPlusPlusConfig.registerGroup({
-                    key: 'Ultron',
-                    name: 'HH Ultron'
-                })
-                allModules.forEach(module => {
-                    hhPlusPlusConfig.registerModule(module)
-                })
-                hhPlusPlusConfig.loadConfig()
-                hhPlusPlusConfig.runModules()
-            }
+            hhPlusPlusConfig.registerGroup({
+                key: 'Ultron',
+                name: 'HH Ultron'
+            })
+            allModules.forEach(module => {
+                hhPlusPlusConfig.registerModule(module)
+            })
+            hhPlusPlusConfig.loadConfig()
+            hhPlusPlusConfig.runModules()
+        }
 
-            if (window.hhPlusPlusConfig) {
-                runScript()
-            } else {
-                $(document).on('hh++-bdsm:loaded', runScript)
-            }
-        } else if (!(['/integrations/', '/index.php'].some(path => path === location.pathname) && location.hostname.includes('nutaku'))) {
-            console.log('WARNING: HH++ BDSM not found. Ending the script here')
+        if (window.hhPlusPlusConfig) {
+            runScript()
+        } else {
+            $(document).one('hh++-bdsm:loaded', runScript)
         }
     }, 1)
 })();
