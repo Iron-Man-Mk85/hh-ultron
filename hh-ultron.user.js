@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.3.5
+// @version        0.3.6
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.6 - Keep HH++ settings cards at their natural height
 *  0.3.5 - Fix popup dismissal, spacebar shortcuts, and the homepage ad setting
 *  0.3.4 - Fix wrong variable name
 *  0.3.3 - Missing parentheses caused bug
@@ -42,7 +43,6 @@
 
     const { $, location } = window;
     const currentPage = location.pathname;
-    const tab = location.search;
     const rewardButton = 'button.blue_button_L[confirm_blue_button]';
 
     if (!$) {
@@ -51,21 +51,20 @@
     }
 
     // Define CSS
-    const sheet = (() => {
-        const style = document.createElement('style')
-        style.setAttribute('class', 'hh-jarvis-style')
-        document.head.appendChild(style)
-        style.sheet.insertRules = (rules) => {
-            rules.replace(/ {4}/g, '').split(/(?<=})\n/g).map(rule => rule.replace(/\n/g, '')).forEach(rule => {
-                try {
-                    style.sheet.insertRule(rule)
-                } catch {
-                    console.log(`Error adding style rules:\n${rule}`)
-                }
-            })
+    const style = document.createElement('style');
+    style.className = 'hh-ultron-style';
+    style.textContent = `
+        .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .panel-contents {
+            align-content: start;
+            align-items: start;
+            grid-auto-rows: max-content;
+            overflow-y: auto;
         }
-        return style.sheet
-    })();
+        .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .config-setting.has-subsettings {
+            grid-row-end: auto;
+        }
+    `;
+    document.head.appendChild(style);
 
     function observeUntil(selector, callback, { once = true, timeout = 5000 } = {}) {
         let timer = null;
