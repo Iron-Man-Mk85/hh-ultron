@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name           HH Ultron
-// @version        0.3.7
+// @name           HH Ultron (Testing)
+// @version        0.3.8
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -9,9 +9,9 @@
 // @match          https://*.mangarpg.com/*
 // @match          https://*.amouragent.com/*
 // @run-at         document-body
-// @namespace      https://github.com/Iron-Man-Mk85/hh-ultron
-// @downloadURL    https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/main/hh-ultron.user.js
-// @updateURL      https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/main/hh-ultron.user.js
+// @namespace      https://github.com/Iron-Man-Mk85/hh-ultron/testing
+// @downloadURL    https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/testing/hh-ultron.user.js
+// @updateURL      https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/testing/hh-ultron.user.js
 // @icon           https://www.google.com/s2/favicons?sz=64&domain=hentaiheroes.com
 // @grant          none
 // ==/UserScript==
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.8 - Keep wheel scrolling in Ultron's settings pane
 *  0.3.7 - Pack settings cards, isolate settings scrolling, and show the script version
 *  0.3.6 - Keep HH++ settings cards at their natural height
 *  0.3.5 - Fix popup dismissal, spacebar shortcuts, and the homepage ad setting
@@ -60,6 +61,10 @@
             align-items: start;
             overflow-y: auto;
             overscroll-behavior: contain;
+            scrollbar-width: thin;
+        }
+        .hh-plus-plus-config-panel:has(> .group-panel[rel="Ultron"].shown) {
+            overflow: clip;
         }
         .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .config-setting.has-subsettings {
             grid-row-end: auto;
@@ -86,7 +91,16 @@
         const selector = '.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .panel-contents';
         window.HHPlusPlus.Helpers.doWhenSelectorAvailable(selector, () => {
             const panel = document.querySelector(selector);
-            panel.addEventListener('wheel', event => event.stopPropagation(), { passive: true });
+            panel.classList.remove('hh-scroll');
+            window.addEventListener('wheel', event => {
+                if (event.ctrlKey || !panel.contains(event.target)) return;
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? panel.clientHeight : 1;
+                const scale = panel.getBoundingClientRect().height / panel.offsetHeight || 1;
+                panel.scrollTop += event.deltaY * unit / scale;
+            }, { capture: true, passive: false });
 
             const cards = panel.querySelectorAll('.config-setting');
             const pack = () => {
@@ -569,7 +583,7 @@
 
             hhPlusPlusConfig.registerGroup({
                 key: 'Ultron',
-                name: 'HH Ultron <small class="ultron-version">v0.3.7</small>'
+                name: 'HH Ultron <small class="ultron-version">v0.3.8 testing</small>'
             })
             allModules.forEach(module => {
                 hhPlusPlusConfig.registerModule(module)
