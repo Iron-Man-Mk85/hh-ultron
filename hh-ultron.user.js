@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           HH Ultron
-// @version        0.3.6
+// @version        0.3.7
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
 // @match          https://*.pornstarharem.com/*
@@ -19,6 +19,7 @@
 /* =================
 *  =   Changelog   =
 *  =================
+*  0.3.7 - Pack settings cards, isolate settings scrolling, and show the script version
 *  0.3.6 - Keep HH++ settings cards at their natural height
 *  0.3.5 - Fix popup dismissal, spacebar shortcuts, and the homepage ad setting
 *  0.3.4 - Fix wrong variable name
@@ -57,14 +58,54 @@
         .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .panel-contents {
             align-content: start;
             align-items: start;
-            grid-auto-rows: max-content;
             overflow-y: auto;
+            overscroll-behavior: contain;
         }
         .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .config-setting.has-subsettings {
             grid-row-end: auto;
         }
+        .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-packed-settings {
+            grid-auto-flow: row dense;
+            grid-auto-rows: 1px;
+            row-gap: 0;
+        }
+        .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-packed-settings .config-setting {
+            grid-row-end: span var(--ultron-setting-rows, 1);
+        }
+        .hh-plus-plus-config-panel .ultron-version {
+            font-size: .66em;
+            font-weight: normal;
+            opacity: .8;
+        }
     `;
     document.head.appendChild(style);
+
+    function packSettings() {
+        if (currentPage !== '/home.html') return;
+
+        const selector = '.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .panel-contents';
+        window.HHPlusPlus.Helpers.doWhenSelectorAvailable(selector, () => {
+            const panel = document.querySelector(selector);
+            panel.addEventListener('wheel', event => event.stopPropagation(), { passive: true });
+
+            const cards = panel.querySelectorAll('.config-setting');
+            const pack = () => {
+                if (!panel.offsetWidth) return;
+
+                for (const card of cards) {
+                    card.style.setProperty('--ultron-setting-rows', card.offsetHeight + 10);
+                }
+                panel.classList.add('ultron-packed-settings');
+            };
+            const groupObserver = new MutationObserver(pack);
+            groupObserver.observe(panel.parentElement, { attributeFilter: ['class'] });
+            if (typeof ResizeObserver !== 'undefined') {
+                const sizeObserver = new ResizeObserver(pack);
+                cards.forEach(card => sizeObserver.observe(card));
+            }
+            pack();
+        });
+    }
 
     function observeUntil(selector, callback, { once = true, timeout = 5000 } = {}) {
         let timer = null;
@@ -528,13 +569,14 @@
 
             hhPlusPlusConfig.registerGroup({
                 key: 'Ultron',
-                name: 'HH Ultron'
+                name: 'HH Ultron <small class="ultron-version">v0.3.7</small>'
             })
             allModules.forEach(module => {
                 hhPlusPlusConfig.registerModule(module)
             })
             hhPlusPlusConfig.loadConfig()
             hhPlusPlusConfig.runModules()
+            packSettings();
         }
 
         if (window.hhPlusPlusConfig) {
