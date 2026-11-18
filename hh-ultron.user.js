@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           HH Ultron (Testing)
+// @name           HH Ultron
 // @version        0.3.8
 // @description    3\/11 QoL for KK games
 // @author         Iron Man
@@ -9,9 +9,9 @@
 // @match          https://*.mangarpg.com/*
 // @match          https://*.amouragent.com/*
 // @run-at         document-body
-// @namespace      https://github.com/Iron-Man-Mk85/hh-ultron/testing
-// @downloadURL    https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/testing/hh-ultron.user.js
-// @updateURL      https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/testing/hh-ultron.user.js
+// @namespace      https://github.com/Iron-Man-Mk85/hh-ultron
+// @downloadURL    https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/main/hh-ultron.user.js
+// @updateURL      https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/main/hh-ultron.user.js
 // @icon           https://www.google.com/s2/favicons?sz=64&domain=hentaiheroes.com
 // @grant          none
 // ==/UserScript==
@@ -583,7 +583,7 @@
 
             hhPlusPlusConfig.registerGroup({
                 key: 'Ultron',
-                name: 'HH Ultron <small class="ultron-version">v0.3.8 testing</small>'
+                name: 'HH Ultron <small class="ultron-version">v0.3.8</small>'
             })
             allModules.forEach(module => {
                 hhPlusPlusConfig.registerModule(module)
