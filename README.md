@@ -15,6 +15,6 @@ Run `npm ci` with Node.js 20 or newer.
 | `npm run build` | Writes a minified stable userscript to `dist/hh-ultron.user.js`. |
 | `npm run check` | Type-checks the source and verifies the committed testing userscript. |
 
-Install the [testing userscript](https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/testing/hh-ultron.user.js) in Tampermonkey and enable one channel at a time.
+Install the [Dev userscript](https://raw.githubusercontent.com/Iron-Man-Mk85/hh-ultron/testing/hh-ultron.user.js) from the testing branch in Tampermonkey and enable one channel at a time.
 
 For an approved stable release, use a release branch, run `npm run build:release` to write the stable build to the root, and run `npm run check -- stable` before opening the PR to `main`. If merging `main` into the release branch conflicts on the generated file, rebuild it from the merged source and stage the result.

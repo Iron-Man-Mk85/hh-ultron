@@ -1,5 +1,6 @@
 # Changelog
 
+- **0.3.10** Name the testing install Dev and show the HH++ version and setting details on hover.
 - **0.3.9** Move the userscript source into TypeScript modules and add separate stable and testing builds.
 - **0.3.8** Keep wheel scrolling in Ultron's settings pane
 - **0.3.7** Pack settings cards, isolate settings scrolling, and show the script version
