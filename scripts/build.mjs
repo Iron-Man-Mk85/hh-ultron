@@ -25,7 +25,7 @@ const slug = new URL(namespace).pathname.slice(1);
 const updateUrl = 'https://raw.githubusercontent.com/' + slug + '/' + branch + '/' + filename;
 const matches = ['pornstarharem', 'hentaiheroes', 'comixharem', 'mangarpg', 'amouragent'];
 const metadata = [
-    ['name', userscript.name + (testing ? ' (Testing)' : '')],
+    ['name', userscript.name + (testing ? ' (Dev)' : '')],
     ['version', version],
     ['description', description],
     ['author', author],
@@ -67,7 +67,7 @@ const options = {
     loader: { '.css': 'text' },
     plugins: testing ? [] : [minifyCss],
     define: {
-        USERSCRIPT_VERSION_LABEL: JSON.stringify(version + (testing ? ' testing' : ''))
+        USERSCRIPT_VERSION_LABEL: JSON.stringify(version + (testing ? ' Dev' : ''))
     },
     banner: {
         js: [
