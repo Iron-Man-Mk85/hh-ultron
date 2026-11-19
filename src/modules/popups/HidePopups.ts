@@ -1,3 +1,4 @@
+import { settingHelp } from '../../settingsHelp';
 import { HHModule } from '../../HHModule';
 import { currentPage } from '../../game';
 import { closeTargetWhenTriggerAvailableInsideContainer } from '../../dom';
@@ -8,7 +9,7 @@ export class HidePopups extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: `<span tooltip="Dismisses these popups if they open during the first 2 seconds. Use either this or 'Close popups from'.">Hide shop and news popups from the homepage</span>`,
+            label: settingHelp("Shop and news popups", "Dismiss shop and news popups that open within the first two seconds."),
         }
         super({name: baseKey, configSchema});
     }

@@ -1,3 +1,4 @@
+import { settingHelp } from '../../settingsHelp';
 import { HHModule } from '../../HHModule';
 import type { ModuleSettings } from '../../HHModule';
 import { currentPage } from '../../game';
@@ -9,10 +10,10 @@ export class RemoveADs extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: `Remove ADs from the game`,
+            label: settingHelp("Hide ads", "Hide ad placements on supported game pages."),
             subSettings: [{
                 key: 'close_home',
-                label: `Close ADs in homepage. Keep kobans collecting`,
+                label: settingHelp("Homepage ads", "Dismiss eligible homepage ads and keep the koban collection option."),
                 default: false
             }]
         }

@@ -1,3 +1,4 @@
+import { settingHelp } from '../../settingsHelp';
 import { HHModule } from '../../HHModule';
 import type { ModuleSettings } from '../../HHModule';
 import { currentPage, rewardButton } from '../../game';
@@ -9,14 +10,14 @@ export class AutoConfirm extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: `Close specific on screen windows:`,
+            label: settingHelp("Auto-confirm dialogs", "Close eligible battle and reward dialogs in the selected modes."),
             subSettings: [{
                 key: 'daddyrinthRelic',
-                label: `Daddyrinth relic confirmation`,
+                label: settingHelp("Labyrinth relics", "Confirm the relic reward dialog."),
                 default: false
             }, {
                 key: 'leagueWin',
-                label: `League win confirmation`,
+                label: settingHelp("League wins", "Close the league victory reward dialog."),
                 default: false
             // }, {
             //     key: 'leagueLoss',
@@ -24,7 +25,7 @@ export class AutoConfirm extends HHModule {
             //     default: false
             }, {
                 key: 'pantheonLoss',
-                label: `Pantheon loss confirmation`,
+                label: settingHelp("Pantheon losses", "Close the Pantheon loss dialog."),
                 default: false
             }]
         }

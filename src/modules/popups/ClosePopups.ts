@@ -1,3 +1,4 @@
+import { settingHelp } from '../../settingsHelp';
 import { HHModule } from '../../HHModule';
 import type { ModuleSettings } from '../../HHModule';
 import { currentPage } from '../../game';
@@ -9,14 +10,14 @@ export class ClosePopups extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: `<span tooltip="more precise and you can select all the options you want. looks for 2 seconds and makes a click on the X to close after a random 250-300 ms. use either this OR the 'Hide' one">Close popups from:</span>`,
+            label: settingHelp("Selected popups", "Dismiss selected popups on the homepage or season page."),
             subSettings: [{
                 key: 'homepage',
-                label: `Homepage`,
+                label: settingHelp("Homepage", "Dismiss eligible shop, news, and special offer popups."),
                 default: true
             }, {
                 key: 'season',
-                label: `Season`,
+                label: settingHelp("Season", "Dismiss the season pass reminder."),
                 default: true,
             }]
         }

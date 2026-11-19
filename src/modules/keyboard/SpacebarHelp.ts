@@ -1,3 +1,4 @@
+import { settingHelp } from '../../settingsHelp';
 import { HHModule } from '../../HHModule';
 import type { ModuleSettings } from '../../HHModule';
 import { currentPage, rewardButton } from '../../game';
@@ -9,22 +10,22 @@ export class SpacebarHelp extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: `Use spacebar to close:`,
+            label: settingHelp("Spacebar shortcuts", "Use Space to confirm eligible rewards and dialogs in the selected modes."),
             subSettings: [{
                 key: 'daddyrinthRelic',
-                label: `Daddyrinth flow confirmations`,
+                label: settingHelp("Labyrinth flow", "Use Space on relics, heal dialogs, and eligible rewards."),
                 default: false
             }, {
                 key: 'daddyrinthBattle',
-                label: `Daddyrinth MM-perform_and_skip, rewards (only if won)`,
+                label: settingHelp("Labyrinth battles", "Use Space to perform and skip, or confirm when you win."),
                 default: false
             }, {
                 key: 'leagueBattle',
-                label: `League battle confirmation`,
+                label: settingHelp("League battles", "Use Space on the league reward confirmation."),
                 default: false
             }, {
                 key: 'activitiesReward',
-                label: `Rewards in Activities page`,
+                label: settingHelp("Activities rewards", "Use Space on the Activities reward dialog."),
                 default: false
             }]
         }

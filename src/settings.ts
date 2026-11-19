@@ -1,4 +1,5 @@
 import { currentPage } from './game';
+import { mountSettingsHelp } from './settingsHelp';
 import css from './settings.css';
 
 export function injectStyles() {
@@ -16,6 +17,7 @@ export function packSettings() {
         const panel = document.querySelector<HTMLElement>(selector);
         if (!panel) return;
         panel.classList.remove('hh-scroll');
+        mountSettingsHelp(panel, 'ultron-setting-tooltip');
         window.addEventListener('wheel', event => {
             if (event.ctrlKey || !(event.target instanceof Node) || !panel.contains(event.target)) return;
 

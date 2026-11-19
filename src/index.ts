@@ -32,7 +32,7 @@ function runUltron() {
 
             hhPlusPlusConfig.registerGroup({
                 key: 'Ultron',
-                name: `HH Ultron <small class="ultron-version">v${USERSCRIPT_VERSION_LABEL}</small>`
+                name: `<span tooltip="By Iron Man · v${USERSCRIPT_VERSION_LABEL}">HH Ultron</span>`
             })
             allModules.forEach(module => {
                 hhPlusPlusConfig.registerModule(module)
