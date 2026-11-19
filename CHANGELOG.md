@@ -1,0 +1,24 @@
+# Changelog
+
+- **0.3.11** Show the version badge on the selected HH++ tab.
+- **0.3.10** Name the testing install Dev and show the HH++ version and setting details on hover.
+- **0.3.9** Move the userscript source into TypeScript modules and add separate stable and testing builds.
+- **0.3.8** Keep wheel scrolling in Ultron's settings pane
+- **0.3.7** Pack settings cards, isolate settings scrolling, and show the script version
+- **0.3.6** Keep HH++ settings cards at their natural height
+- **0.3.5** Fix popup dismissal, spacebar shortcuts, and the homepage ad setting
+- **0.3.4** Fix wrong variable name
+- **0.3.3** Missing parentheses caused bug
+- **0.3.2** Update SpacebarHelp
+- **0.3.1** Update SpacebarHelp
+- **0.3.0** Add SpacebarHelp module
+- **0.2.1** Edit AutoConfirm module for broader usage
+- **0.2.0** Add Daddyrinth relic auto confirmation module
+- **0.1.2** Add league battle AD removal
+- **0.1.1** Add random delay
+- **0.1.0** Add close popups module, tooltips for hide/close popups modules
+- **0.0.5** Add season AD removal
+- **0.0.4** Add harem AD removal
+- **0.0.3** Add love raids AD removal
+- **0.0.2** Merge ADs modules
+- **0.0.1** Initial release
