@@ -67,7 +67,7 @@ const options = {
     loader: { '.css': 'text' },
     plugins: testing ? [] : [minifyCss],
     define: {
-        USERSCRIPT_VERSION_LABEL: JSON.stringify(version + (testing ? ' Dev' : ''))
+        USERSCRIPT_VERSION: JSON.stringify(version)
     },
     banner: {
         js: [

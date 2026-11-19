@@ -1,4 +1,4 @@
-declare const USERSCRIPT_VERSION_LABEL: string;
+declare const USERSCRIPT_VERSION: string;
 
 declare module '*.css' {
     const css: string;

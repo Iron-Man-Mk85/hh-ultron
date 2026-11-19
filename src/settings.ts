@@ -5,7 +5,9 @@ import css from './settings.css';
 export function injectStyles() {
     const style = document.createElement('style');
     style.className = 'hh-ultron-style';
-    style.textContent = css;
+    style.textContent = `${css}
+        .hh-plus-plus-config-panel { --ultron-version: "v${USERSCRIPT_VERSION}"; }
+    `;
     document.head.appendChild(style);
 }
 

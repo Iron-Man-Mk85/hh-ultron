@@ -19,6 +19,20 @@
 .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-packed-settings .config-setting {
     grid-row-end: span var(--ultron-setting-rows, 1);
 }
+.hh-plus-plus-config-panel .tabs h4[rel="Ultron"] {
+    position: relative;
+}
+.hh-plus-plus-config-panel .tabs h4[rel="Ultron"].selected::after {
+    content: var(--ultron-version);
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: .15rem;
+    font-size: .625rem;
+    font-weight: normal;
+    line-height: 1;
+    text-transform: none;
+    pointer-events: none;
+}
 .ironman-setting-help {
     display: inline-grid;
     place-items: center;
