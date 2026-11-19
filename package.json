@@ -1,0 +1,32 @@
+{
+  "name": "hh-ultron",
+  "version": "0.3.9",
+  "private": true,
+  "type": "module",
+  "description": "3\\/11 QoL for KK games",
+  "author": "Iron Man",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Iron-Man-Mk85/hh-ultron.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "userscript": {
+    "name": "HH Ultron",
+    "runAt": "document-body"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs stable",
+    "build:testing": "node scripts/build.mjs testing",
+    "build:release": "node scripts/build.mjs stable --install",
+    "watch": "node scripts/build.mjs testing --watch",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && node scripts/build.mjs check"
+  },
+  "devDependencies": {
+    "@types/jquery": "3.5.32",
+    "esbuild": "0.25.12",
+    "typescript": "5.9.3"
+  }
+}

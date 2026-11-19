@@ -1,0 +1,32 @@
+name: Check userscript
+
+on:
+  push:
+    branches: [main, testing]
+  pull_request:
+    branches: [main, testing]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Verify the installable userscript
+        env:
+          TARGET_BRANCH: ${{ github.base_ref || github.ref_name }}
+        run: |
+          if [ "$TARGET_BRANCH" = main ]; then
+            npm run check -- stable
+          else
+            npm run check
+          fi
+          node --check "$(node -p "require('./package.json').name").user.js"
+      - run: npm run build
