@@ -9,34 +9,27 @@
 .hh-plus-plus-config-panel:has(> .group-panel[rel="Ultron"].shown) {
     overflow: clip;
 }
-.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-layout {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 17rem));
-    justify-content: start;
-    gap: .65rem;
-    padding-block-end: .6rem;
-}
-.ultron-settings-column,
-.ultron-settings-section {
-    display: grid;
-    min-width: 0;
-    gap: .4rem;
-}
-.ultron-settings-column {
-    gap: .65rem;
-}
-.ultron-settings-section > h5 {
-    margin: 0;
-    color: inherit;
-    font: 600 .85rem/1.2 system-ui, sans-serif;
-}
-.hh-plus-plus-config-panel .ultron-settings-section .config-setting {
+.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-layout > .config-setting {
     grid-row-end: auto;
 }
-.hh-plus-plus-config-panel .ultron-settings-section label {
+.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-packed-settings {
+    grid-auto-flow: row dense;
+    grid-auto-rows: 1px;
+    row-gap: 0;
+}
+.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-packed-settings > .config-setting {
+    grid-row-end: span var(--ultron-setting-rows, 1);
+}
+.ultron-setting-category {
+    margin: 0 0 .25em;
+    font: 600 .75em/1.2 system-ui, sans-serif;
+    opacity: .85;
+}
+.hh-plus-plus-config-panel .ultron-settings-layout label {
     align-items: center;
     gap: .45em;
 }
-.hh-plus-plus-config-panel .ultron-settings-section input[type="checkbox"] {
+.hh-plus-plus-config-panel .ultron-settings-layout input[type="checkbox"] {
     flex-shrink: 0;
 }
 .hh-plus-plus-config-panel .tabs h4[rel="Ultron"] {
