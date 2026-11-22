@@ -1,5 +1,8 @@
 # Changelog
 
+- **0.4.2**
+  - Organize the settings into tabs above the HH++ cards.
+  - Use an Avengers-inspired Ultron faceplate for the update indicator.
 - **0.4.1**
   - Use the HH++ settings grid with small category labels and compact cards.
   - Replace the update icon with a small dismissible dot.
