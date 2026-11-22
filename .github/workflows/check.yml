@@ -25,8 +25,9 @@ jobs:
         run: |
           if [ "$TARGET_BRANCH" = main ]; then
             npm run check -- stable
+            node --check hh-ultron.user.js
           else
             npm run check
+            node --check hh-ultron-dev.user.js
           fi
-          node --check "$(node -p "require('./package.json').name").user.js"
       - run: npm run build

@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { copyFile, readFile, readdir, rm } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build, context, transform } from 'esbuild';
@@ -18,7 +18,9 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const { name, version, description, author, repository, userscript } = JSON.parse(
     await readFile(resolve(root, 'package.json'), 'utf8')
 );
-const filename = name + '.user.js';
+const stableFilename = name + '.user.js';
+const devFilename = name + '-dev.user.js';
+const filename = testing ? devFilename : stableFilename;
 const branch = testing ? 'testing' : 'main';
 const namespace = repository.url.replace(/\.git$/, '');
 const slug = new URL(namespace).pathname.slice(1);
@@ -50,6 +52,16 @@ const minifyCss = {
 };
 
 const output = testing || install || check ? filename : 'dist/' + filename;
+const legacyDevUrl = {
+    name: 'legacy-dev-url',
+    setup(builder) {
+        builder.onEnd(async result => {
+            if (!result.errors.length) {
+                await copyFile(resolve(root, devFilename), resolve(root, stableFilename));
+            }
+        });
+    }
+};
 const options = {
     absWorkingDir: root,
     entryPoints: ['src/index.ts'],
@@ -61,13 +73,13 @@ const options = {
     target: 'es2022',
     charset: 'utf8',
     treeShaking: true,
-    minify: !testing,
+    minify: true,
     legalComments: 'none',
-    sourcemap: testing ? 'inline' : false,
     loader: { '.css': 'text' },
-    plugins: testing ? [] : [minifyCss],
+    plugins: testing && !check ? [minifyCss, legacyDevUrl] : [minifyCss],
     define: {
-        USERSCRIPT_VERSION: JSON.stringify(version)
+        USERSCRIPT_VERSION: JSON.stringify(version),
+        USERSCRIPT_CHANNEL: JSON.stringify(testing ? 'Dev' : 'Stable')
     },
     banner: {
         js: [
@@ -86,11 +98,18 @@ if (watch) {
     console.log('Watching src/ for the testing build');
 } else {
     const result = await build(options);
+    if (install) await rm(resolve(root, devFilename), { force: true });
     if (check) {
         const current = await readFile(resolve(root, output), 'utf8');
         if (current !== result.outputFiles[0].text) {
             const command = testing ? 'npm run build:testing' : 'npm run build:release';
             throw new Error(output + ' is out of date. Rebuild with ' + command);
+        }
+        if (testing) {
+            const legacy = await readFile(resolve(root, stableFilename), 'utf8');
+            if (legacy !== current) throw new Error('The old Dev URL must serve the same build during migration. Run npm run build:testing.');
+        } else if ((await readdir(root)).includes(devFilename)) {
+            throw new Error('The stable release contains the Dev userscript. Run npm run build:release.');
         }
     }
     console.log((check ? 'Verified ' : 'Built ') + output + ' (' + channel + ')');
