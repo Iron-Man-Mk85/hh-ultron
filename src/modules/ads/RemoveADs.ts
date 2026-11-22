@@ -15,7 +15,7 @@ export class RemoveADs extends HHModule {
             label: settingHelp("Hide ads", "Hide ad placements and stop their embedded players on supported game pages."),
             subSettings: [{
                 key: 'close_home',
-                label: settingHelp("Include homepage ads", "Hide the homepage ad and keep the koban collection button available."),
+                label: settingHelp("Include homepage ads", "Remove the membership banner and keep any koban offer the game loads."),
                 default: false
             }]
         }

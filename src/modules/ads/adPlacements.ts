@@ -33,10 +33,20 @@ export function getAdPlacement() {
     return placements.find(({ page }) => typeof page === 'string' ? pathname.includes(page) : page.test(pathname));
 }
 
+function isMembershipBanner(placement: HTMLElement) {
+    if (!placement.querySelector('.become-member-text')) return false;
+    const actions = placement.querySelectorAll('.bottom-block-container :is(button, a, [role="button"])');
+    return actions.length === 1 && actions[0].matches('[onclick*="openBundles"][onclick*="monthly_card"]');
+}
+
 export function hideAdPlacement({ selector, keepControls }: AdPlacement) {
     let homeStyles: HTMLStyleElement | undefined;
     const unload = (placement: HTMLElement) => {
         if (keepControls) {
+            if (isMembershipBanner(placement)) {
+                placement.remove();
+                return;
+            }
             if (!homeStyles) {
                 homeStyles = document.createElement('style');
                 homeStyles.textContent = homeAdStyles;
