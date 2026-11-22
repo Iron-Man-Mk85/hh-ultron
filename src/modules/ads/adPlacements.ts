@@ -40,22 +40,21 @@ function isMembershipBanner(placement: HTMLElement) {
 }
 
 export function hideAdPlacement({ selector, keepControls }: AdPlacement) {
-    let homeStyles: HTMLStyleElement | undefined;
+    let stylesInstalled = false;
     const unload = (placement: HTMLElement) => {
-        if (keepControls) {
-            if (isMembershipBanner(placement)) {
-                placement.remove();
-                return;
-            }
-            if (!homeStyles) {
-                homeStyles = document.createElement('style');
-                homeStyles.textContent = homeAdStyles;
-                document.head.appendChild(homeStyles);
-            }
-            placement.classList.add('ultron-ad-media-hidden');
-        } else {
-            placement.style.display = 'none';
+        if (keepControls && isMembershipBanner(placement)) {
+            placement.remove();
+            return;
         }
+        if (!stylesInstalled) {
+            const style = document.createElement('style');
+            // Places of Power calls .show() on the ad slot when opening the list.
+            style.textContent = keepControls ? homeAdStyles : `${selector} { display: none !important; }`;
+            document.head.appendChild(style);
+            stylesInstalled = true;
+        }
+        if (keepControls) placement.classList.add('ultron-ad-media-hidden');
+
         // CSS hiding alone leaves the embedded players running.
         placement.querySelectorAll('iframe, audio, video, embed, object').forEach(media => media.remove());
     };

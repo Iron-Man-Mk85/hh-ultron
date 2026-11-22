@@ -1,5 +1,6 @@
 # Changelog
 
+- **0.4.3** Keep ad banners hidden when Places of Power shows its list.
 - **0.4.2**
   - Organize the settings into tabs above the HH++ cards.
   - Use an Avengers-inspired Ultron faceplate for the update indicator.
