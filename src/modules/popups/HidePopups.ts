@@ -9,7 +9,7 @@ export class HidePopups extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: settingHelp("Shop and news popups", "Dismiss shop and news popups that open within the first two seconds."),
+            label: settingHelp("Auto-close shop and news", "Use this option for just the shop and news popups that appear when the homepage loads."),
         }
         super({name: baseKey, configSchema});
     }

@@ -10,14 +10,14 @@ export class ClosePopups extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: settingHelp("Selected popups", "Dismiss selected popups on the homepage or season page."),
+            label: settingHelp("Auto-close more popups", "Choose which pages get automatic dismissal. The homepage option includes shop and news, so it can be used on its own."),
             subSettings: [{
                 key: 'homepage',
-                label: settingHelp("Homepage", "Dismiss eligible shop, news, and special offer popups."),
+                label: settingHelp("Homepage shop, news and offers", "Close the shop, news, trial Monthly Card and eligible special offers when the homepage loads."),
                 default: true
             }, {
                 key: 'season',
-                label: settingHelp("Season", "Dismiss the season pass reminder."),
+                label: settingHelp("Season Pass reminder", "Close the pass reminder when the Season page loads."),
                 default: true,
             }]
         }

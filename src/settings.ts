@@ -2,6 +2,11 @@ import { currentPage } from './game';
 import { mountSettingsHelp } from './settingsHelp';
 import css from './settings.css';
 
+const sections = [
+    { id: 'ultron-ads-and-popups', label: 'Ads and popups', keys: ['removeADs', 'hidePopups', 'closePopups'] },
+    { id: 'ultron-battles-and-rewards', label: 'Battles and rewards', keys: ['autoConfirm', 'spacebarHelp'] }
+];
+
 export function injectStyles() {
     const style = document.createElement('style');
     style.className = 'hh-ultron-style';
@@ -18,8 +23,25 @@ export function packSettings() {
     const selector = '.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .panel-contents';
     window.HHPlusPlus.Helpers.doWhenSelectorAvailable(selector, () => {
         const panel = document.querySelector<HTMLElement>(selector);
-        if (!panel) return;
+        if (!panel || panel.classList.contains('ultron-settings-layout')) return;
         panel.classList.remove('hh-scroll');
+        for (const { id, label, keys } of sections) {
+            const cards = keys.flatMap(key => {
+                const card = panel.querySelector(`.config-setting[rel="Ultron_${key}"]`);
+                return card ? [card] : [];
+            });
+            if (!cards.length) continue;
+
+            const section = document.createElement('section');
+            section.className = 'ultron-settings-section';
+            section.setAttribute('aria-labelledby', id);
+            const heading = document.createElement('h5');
+            heading.id = id;
+            heading.textContent = label;
+            section.append(heading, ...cards);
+            panel.appendChild(section);
+        }
+        panel.classList.add('ultron-settings-layout');
         mountSettingsHelp(panel, 'ultron-setting-tooltip');
         window.addEventListener('wheel', event => {
             if (event.ctrlKey || !(event.target instanceof Node) || !panel.contains(event.target)) return;
@@ -30,22 +52,5 @@ export function packSettings() {
             const scale = panel.getBoundingClientRect().height / panel.offsetHeight || 1;
             panel.scrollTop += event.deltaY * unit / scale;
         }, { capture: true, passive: false });
-
-        const cards = panel.querySelectorAll<HTMLElement>('.config-setting');
-        const pack = () => {
-            if (!panel.offsetWidth) return;
-
-            for (const card of cards) {
-                card.style.setProperty('--ultron-setting-rows', String(card.offsetHeight + 10));
-            }
-            panel.classList.add('ultron-packed-settings');
-        };
-        const groupObserver = new MutationObserver(pack);
-        if (panel.parentElement) groupObserver.observe(panel.parentElement, { attributeFilter: ['class'] });
-        if (typeof ResizeObserver !== 'undefined') {
-            const sizeObserver = new ResizeObserver(pack);
-            cards.forEach(card => sizeObserver.observe(card));
-        }
-        pack();
     });
 }

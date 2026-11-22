@@ -13,15 +13,15 @@ export class SpacebarHelp extends HHModule {
             label: settingHelp("Spacebar shortcuts", "Use Space to confirm eligible rewards and dialogs in the selected modes."),
             subSettings: [{
                 key: 'daddyrinthRelic',
-                label: settingHelp("Labyrinth flow", "Use Space on relics, heal dialogs, and eligible rewards."),
+                label: settingHelp("Labyrinth rewards and healing", "Use Space on relics, heal dialogs, and eligible rewards."),
                 default: false
             }, {
                 key: 'daddyrinthBattle',
-                label: settingHelp("Labyrinth battles", "Use Space to perform and skip, or confirm when you win."),
+                label: settingHelp("Labyrinth fight and skip", "Use Space to perform and skip, or confirm when you win."),
                 default: false
             }, {
                 key: 'leagueBattle',
-                label: settingHelp("League battles", "Use Space on the league reward confirmation."),
+                label: settingHelp("League rewards", "Use Space on the league reward confirmation."),
                 default: false
             }, {
                 key: 'activitiesReward',

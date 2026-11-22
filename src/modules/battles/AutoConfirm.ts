@@ -10,14 +10,14 @@ export class AutoConfirm extends HHModule {
         const configSchema = {
             baseKey,
             default: false,
-            label: settingHelp("Auto-confirm dialogs", "Close eligible battle and reward dialogs in the selected modes."),
+            label: settingHelp("Auto-confirm battle results", "Automatically confirm the battle and reward dialogs you select below."),
             subSettings: [{
                 key: 'daddyrinthRelic',
                 label: settingHelp("Labyrinth relics", "Confirm the relic reward dialog."),
                 default: false
             }, {
                 key: 'leagueWin',
-                label: settingHelp("League wins", "Close the league victory reward dialog."),
+                label: settingHelp("League victory rewards", "Close the league victory reward dialog."),
                 default: false
             // }, {
             //     key: 'leagueLoss',
