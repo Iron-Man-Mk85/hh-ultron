@@ -10,14 +10,19 @@
     overflow: clip;
 }
 .hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-layout {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-    gap: .8rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 17rem));
+    justify-content: start;
+    gap: .65rem;
     padding-block-end: .6rem;
 }
+.ultron-settings-column,
 .ultron-settings-section {
     display: grid;
     min-width: 0;
     gap: .4rem;
+}
+.ultron-settings-column {
+    gap: .65rem;
 }
 .ultron-settings-section > h5 {
     margin: 0;
