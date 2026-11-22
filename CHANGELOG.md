@@ -1,5 +1,7 @@
 # Changelog
 
+- **0.3.13**
+  - Unload ads during page startup and keep replacement ads from restarting playback.
 - **0.3.12**
   - Stop embedded ads from playing in placements hidden by Ultron.
   - Hide homepage ads locally and keep the koban collection option available.

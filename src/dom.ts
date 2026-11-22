@@ -1,4 +1,4 @@
-export interface ObserverOptions {
+interface ObserverOptions {
     once?: boolean;
     timeout?: number | null;
 }
@@ -13,7 +13,7 @@ interface PopupOptions extends ClickOptions {
     targetSelector?: string;
 }
 
-export function observeUntil(selector: string, callback: (elements: NodeListOf<HTMLElement>) => void,
+function observeUntil(selector: string, callback: (elements: NodeListOf<HTMLElement>) => void,
     { once = true, timeout = 5000 }: ObserverOptions = {}) {
     let timer: number | null = null;
 

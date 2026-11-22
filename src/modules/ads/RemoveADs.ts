@@ -5,6 +5,8 @@ import { removeClassWhenSelectorAvailable } from '../../dom';
 import { getAdPlacement, hideAdPlacement } from './adPlacements';
 
 export class RemoveADs extends HHModule {
+    private adGuardStarted = false;
+
     constructor() {
         const baseKey = 'removeADs'
         const configSchema = {
@@ -13,7 +15,7 @@ export class RemoveADs extends HHModule {
             label: settingHelp("Hide ads", "Hide ad placements and stop their embedded players on supported game pages."),
             subSettings: [{
                 key: 'close_home',
-                label: settingHelp("Homepage ads", "Hide embedded homepage ads and keep the koban collection option."),
+                label: settingHelp("Include homepage ads", "Hide the homepage ad and keep the koban collection button available."),
                 default: false
             }]
         }
@@ -24,13 +26,34 @@ export class RemoveADs extends HHModule {
         return Boolean(getAdPlacement());
     }
 
+    runFromSavedSettings() {
+        if (!this.shouldRun()) return;
+        let settings: Record<string, unknown> | null;
+        try {
+            settings = JSON.parse(localStorage.getItem('HHPlusPlusConfig') ?? 'null');
+        } catch {
+            // Let HH++ initialize the module normally if storage is unavailable.
+            return;
+        }
+        if (settings?.Ultron_removeADs === true) {
+            this.startAdGuard(settings.Ultron_removeADs_close_home === true);
+        }
+    }
+
+    private startAdGuard(closeHome: boolean) {
+        const placement = getAdPlacement();
+        if (this.adGuardStarted || !placement || (placement.keepControls && !closeHome)) return;
+        hideAdPlacement(placement);
+        this.adGuardStarted = true;
+    }
+
     run({ close_home }: ModuleSettings) {
         if (this.hasRun) return;
 
         const placement = getAdPlacement();
         if (!placement) return;
 
-        if (!placement.keepControls || close_home) hideAdPlacement(placement);
+        this.startAdGuard(close_home);
         if (placement.clearReservedHeight) {
             removeClassWhenSelectorAvailable('.height-for-ad', 'height-for-ad', { once: false });
         }

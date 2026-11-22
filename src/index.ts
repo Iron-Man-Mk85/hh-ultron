@@ -6,10 +6,20 @@ import { ClosePopups } from './modules/popups/ClosePopups';
 import { AutoConfirm } from './modules/battles/AutoConfirm';
 import { SpacebarHelp } from './modules/keyboard/SpacebarHelp';
 
+const removeAds = new RemoveADs();
+removeAds.runFromSavedSettings();
+
 function runUltron() {
     const { $ } = window;
 
     if (!$) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', runUltron, { once: true });
+            return;
+        } else if (document.readyState !== 'complete') {
+            window.addEventListener('load', runUltron, { once: true });
+            return;
+        }
         console.log('WARNING: No jQuery found. Probably an error page. Ending the script here')
         return
     }
@@ -18,7 +28,7 @@ function runUltron() {
     injectStyles();
 
     const allModules = [
-        new RemoveADs(),
+        removeAds,
         new HidePopups(),
         new ClosePopups(),
         new AutoConfirm(),
@@ -50,4 +60,13 @@ function runUltron() {
     }, 1)
 }
 
-runUltron();
+if (document.body) runUltron();
+else {
+    // Only the ad guard needs to run before the body exists.
+    const waitForBody = new MutationObserver(() => {
+        if (!document.body) return;
+        waitForBody.disconnect();
+        runUltron();
+    });
+    waitForBody.observe(document, { childList: true, subtree: true });
+}
