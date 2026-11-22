@@ -1,29 +1,55 @@
-.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .panel-contents {
+.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-layout {
     box-sizing: border-box;
-    align-content: start;
-    align-items: start;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: .45rem;
 }
 .hh-plus-plus-config-panel:has(> .group-panel[rel="Ultron"].shown) {
     overflow: clip;
 }
-.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-layout > .config-setting {
+.ultron-settings-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+}
+.ultron-settings-categories button {
+    appearance: none;
+    padding: .28em .65em;
+    border: 1px solid transparent;
+    border-radius: .35em;
+    background: transparent;
+    color: inherit;
+    font: 600 .8rem/1.25 system-ui, sans-serif;
+    cursor: pointer;
+}
+.ultron-settings-categories button:hover {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.ultron-settings-categories button[aria-selected="true"] {
+    border-color: var(--config-setting-border, currentColor);
+    background: var(--config-setting-background, #241e30);
+}
+.ultron-settings-categories button:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: -3px;
+}
+.ultron-settings-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 152px), 1fr));
+    align-content: start;
+    align-items: start;
+    gap: 10px;
+    min-height: 0;
+    padding-block-end: .4rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+.ultron-settings-page[hidden] {
+    display: none;
+}
+.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-page > .config-setting {
     grid-row-end: auto;
-}
-.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-packed-settings {
-    grid-auto-flow: row dense;
-    grid-auto-rows: 1px;
-    row-gap: 0;
-}
-.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-packed-settings > .config-setting {
-    grid-row-end: span var(--ultron-setting-rows, 1);
-}
-.ultron-setting-category {
-    margin: 0 0 .25em;
-    font: 600 .75em/1.2 system-ui, sans-serif;
-    opacity: .85;
 }
 .hh-plus-plus-config-panel .ultron-settings-layout label {
     align-items: center;

@@ -78,5 +78,5 @@ export function mountSettingsHelp(panel: HTMLElement, tooltipId: string) {
     document.addEventListener('pointerdown', event => {
         if (getHelp(event.target) !== anchor) close();
     });
-    panel.addEventListener('scroll', close, { passive: true });
+    panel.addEventListener('scroll', close, { capture: true, passive: true });
 }
