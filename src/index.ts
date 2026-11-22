@@ -5,6 +5,7 @@ import { HidePopups } from './modules/popups/HidePopups';
 import { ClosePopups } from './modules/popups/ClosePopups';
 import { AutoConfirm } from './modules/battles/AutoConfirm';
 import { SpacebarHelp } from './modules/keyboard/SpacebarHelp';
+import { UpdateNotice } from './modules/updates/UpdateNotice';
 
 const removeAds = new RemoveADs();
 removeAds.runFromSavedSettings();
@@ -32,7 +33,8 @@ function runUltron() {
         new HidePopups(),
         new ClosePopups(),
         new AutoConfirm(),
-        new SpacebarHelp()
+        new SpacebarHelp(),
+        new UpdateNotice()
     ]
 
     setTimeout(() => {

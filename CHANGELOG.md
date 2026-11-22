@@ -1,5 +1,9 @@
 # Changelog
 
+- **0.4.0**
+  - Remove the homepage membership banner while preserving koban offers.
+  - Keep the settings categories in compact columns.
+  - Show a dismissible update indicator beside HH++.
 - **0.3.13**
   - Unload ads during page startup and keep replacement ads from restarting playback.
   - Group settings by purpose and clarify which popups each option closes.
