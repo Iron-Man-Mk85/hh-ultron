@@ -24,7 +24,7 @@ export class UpdateNotice extends HHModule {
         const baseKey = 'updateNotice';
         super({ name: baseKey, configSchema: {
             baseKey,
-            label: settingHelp('Update indicator', 'Show an Ultron icon beside HH++ when the installed version changes. Click it to dismiss.'),
+            label: settingHelp('Update indicator', 'Show a dot beside HH++ when Ultron updates. Hover to see the version or click to dismiss.'),
             default: true
         } });
     }
@@ -55,7 +55,6 @@ export class UpdateNotice extends HHModule {
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'ultron-update-notice';
-            button.textContent = 'U';
             button.dataset.tooltip = `Ultron was updated to v${USERSCRIPT_VERSION}`;
             button.setAttribute('aria-label', `${button.dataset.tooltip}. Dismiss update indicator.`);
             button.addEventListener('click', event => {

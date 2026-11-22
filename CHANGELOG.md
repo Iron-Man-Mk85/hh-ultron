@@ -1,5 +1,8 @@
 # Changelog
 
+- **0.4.1**
+  - Use the HH++ settings grid with small category labels and compact cards.
+  - Replace the update icon with a small dismissible dot.
 - **0.4.0**
   - Remove the homepage membership banner while preserving koban offers.
   - Keep the settings categories in compact columns.
