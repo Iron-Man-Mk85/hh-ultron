@@ -1,4 +1,4 @@
-interface ObserverOptions {
+export interface ObserverOptions {
     once?: boolean;
     timeout?: number | null;
 }
@@ -13,7 +13,7 @@ interface PopupOptions extends ClickOptions {
     targetSelector?: string;
 }
 
-function observeUntil(selector: string, callback: (elements: NodeListOf<HTMLElement>) => void,
+export function observeUntil(selector: string, callback: (elements: NodeListOf<HTMLElement>) => void,
     { once = true, timeout = 5000 }: ObserverOptions = {}) {
     let timer: number | null = null;
 
@@ -41,14 +41,6 @@ function observeUntil(selector: string, callback: (elements: NodeListOf<HTMLElem
             observer.disconnect();
         }, timeout);
     }
-}
-
-export function hideWhenSelectorAvailable(selector: string, { once = true, timeout = 5000 }: ObserverOptions = {}) {
-    observeUntil(selector, (elements) => {
-        elements.forEach(el => {
-            el.style.display = 'none';
-        });
-    }, { timeout, once });
 }
 
 function isVisible<T extends Element>(el: T | null): el is T {
@@ -134,28 +126,6 @@ export function removeClassWhenSelectorAvailable(selector: string, classToRemove
     { once = true, timeout = 5000 }: ObserverOptions = {}) {
     observeUntil(selector, (elements) => {
         elements.forEach(el => el.classList.remove(classToRemove));
-    }, { timeout, once });
-}
-
-export function clickWhenSelectorAvailable(selector: string, elementToClick: string,
-    { delay = 2000, once = true, timeout = 5000 }: ClickOptions = {}) {
-    let pending = false;
-    let hasClicked = false;
-
-    observeUntil(selector, () => {
-        if (hasClicked || pending) return;
-
-        const closeElement = document.querySelector<HTMLElement>(elementToClick);
-        if (isClickable(closeElement)) {
-            pending = true;
-            setTimeout(() => {
-                pending = false;
-                    if (isClickable(closeElement) && Array.from(document.querySelectorAll(selector)).some(element => isVisible(element))) {
-                    hasClicked = true;
-                    closeElement.click();
-                }
-            }, getClickDelay(delay));
-        }
     }, { timeout, once });
 }
 

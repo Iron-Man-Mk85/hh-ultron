@@ -1,5 +1,8 @@
 # Changelog
 
+- **0.3.12**
+  - Stop embedded ads from playing in placements hidden by Ultron.
+  - Hide homepage ads locally and keep the koban collection option available.
 - **0.3.11** Show the version badge on the selected HH++ tab.
 - **0.3.10** Name the testing install Dev and show the HH++ version and setting details on hover.
 - **0.3.9** Move the userscript source into TypeScript modules and add separate stable and testing builds.

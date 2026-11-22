@@ -1,0 +1,8 @@
+#ad_home.ultron-ad-media-hidden .iframe-container {
+    display: none;
+}
+
+#ad_home.ultron-ad-media-hidden > close {
+    position: static;
+    align-self: flex-end;
+}
