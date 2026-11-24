@@ -1,0 +1,47 @@
+.ultron-update-notice {
+    position: absolute;
+    z-index: 5;
+    translate: calc(-100% - .25em) -50%;
+    appearance: none;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #d0cdd6;
+    cursor: pointer;
+}
+.ultron-update-notice svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 1px 1px #18090d);
+    pointer-events: none;
+}
+:has(> .jarvis-changelog-notice) > .ultron-update-notice {
+    translate: calc(-200% - .55em) -50%;
+}
+.ultron-update-notice:hover,
+.ultron-update-notice:focus-visible {
+    color: #fff;
+}
+.ultron-update-notice:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
+}
+.ultron-update-notice:is(:hover, :focus-visible)::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    inset-block-start: calc(100% + .4em);
+    inset-inline-end: 0;
+    padding: .35em .55em;
+    border: 1px solid var(--config-setting-border, #a9a3bc);
+    border-radius: .35em;
+    background: var(--config-setting-background, #241e30);
+    color: #fff;
+    font: 500 .75rem/1.25 system-ui, sans-serif;
+    white-space: nowrap;
+    pointer-events: none;
+}
