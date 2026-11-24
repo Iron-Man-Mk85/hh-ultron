@@ -1,0 +1,33 @@
+name: Check userscript
+
+on:
+  push:
+    branches: [main, testing]
+  pull_request:
+    branches: [main, testing]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Verify the installable userscript
+        env:
+          TARGET_BRANCH: ${{ github.base_ref || github.ref_name }}
+        run: |
+          if [ "$TARGET_BRANCH" = main ]; then
+            npm run check -- stable
+            node --check hh-ultron.user.js
+          else
+            npm run check
+            node --check hh-ultron-dev.user.js
+          fi
+      - run: npm run build

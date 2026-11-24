@@ -1,0 +1,107 @@
+.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-layout {
+    box-sizing: border-box;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: .45rem;
+}
+.hh-plus-plus-config-panel:has(> .group-panel[rel="Ultron"].shown) {
+    overflow: clip;
+}
+.ultron-settings-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+}
+.ultron-settings-categories button {
+    appearance: none;
+    padding: .28em .65em;
+    border: 1px solid transparent;
+    border-radius: .35em;
+    background: transparent;
+    color: inherit;
+    font: 600 .8rem/1.25 system-ui, sans-serif;
+    cursor: pointer;
+}
+.ultron-settings-categories button:hover {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.ultron-settings-categories button[aria-selected="true"] {
+    border-color: var(--config-setting-border, currentColor);
+    background: var(--config-setting-background, #241e30);
+}
+.ultron-settings-categories button:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: -3px;
+}
+.ultron-settings-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 152px), 1fr));
+    align-content: start;
+    align-items: start;
+    gap: 10px;
+    min-height: 0;
+    padding-block-end: .4rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+.ultron-settings-page[hidden] {
+    display: none;
+}
+.hh-plus-plus-config-panel .group-panel[rel="Ultron"] .ultron-settings-page > .config-setting {
+    grid-row-end: auto;
+}
+.hh-plus-plus-config-panel .ultron-settings-layout label {
+    align-items: center;
+    gap: .45em;
+}
+.hh-plus-plus-config-panel .ultron-settings-layout input[type="checkbox"] {
+    flex-shrink: 0;
+}
+.hh-plus-plus-config-panel .tabs h4[rel="Ultron"] {
+    position: relative;
+}
+.hh-plus-plus-config-panel .tabs h4[rel="Ultron"].selected::after {
+    content: var(--ultron-version);
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: .15rem;
+    font-size: .625rem;
+    font-weight: normal;
+    line-height: 1;
+    text-transform: none;
+    pointer-events: none;
+}
+.ironman-setting-help {
+    display: inline-grid;
+    place-items: center;
+    box-sizing: border-box;
+    inline-size: 1.25em;
+    block-size: 1.25em;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: .8em;
+    line-height: 1;
+    vertical-align: .08em;
+    cursor: help;
+}
+.ironman-setting-help:hover,
+.ironman-setting-help:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
+}
+.ironman-setting-tooltip {
+    position: fixed;
+    inset: auto;
+    z-index: 10010;
+    box-sizing: border-box;
+    max-width: min(18rem, calc(100vw - 16px));
+    margin: 0;
+    padding: .5em .7em;
+    border: 1px solid var(--config-setting-border, #a9a3bc);
+    border-radius: .4em;
+    background: var(--config-setting-background, #241e30);
+    color: #fff;
+    font: 14px/1.4 system-ui, sans-serif;
+    pointer-events: none;
+}
