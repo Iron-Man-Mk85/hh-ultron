@@ -2,7 +2,7 @@ import { settingHelp } from '../../settingsHelp';
 import { HHModule } from '../../HHModule';
 import type { ModuleSettings } from '../../HHModule';
 import { removeClassWhenSelectorAvailable } from '../../dom';
-import { getAdPlacement, hideAdPlacement } from './adPlacements';
+import { closeHomeAds, getAdPlacement, hideAdPlacement } from './adPlacements';
 
 export class RemoveADs extends HHModule {
     private adGuardStarted = false;
@@ -15,7 +15,7 @@ export class RemoveADs extends HHModule {
             label: settingHelp("Hide ads", "Hide ad placements and stop their embedded players on supported game pages."),
             subSettings: [{
                 key: 'close_home',
-                label: settingHelp("Include homepage ads", "Remove the membership banner and keep any koban offer the game loads."),
+                label: settingHelp("Include homepage ads", "Close homepage ads so the game can show its next offer. Keep ads that offer kobans."),
                 default: false
             }]
         }
@@ -42,8 +42,9 @@ export class RemoveADs extends HHModule {
 
     private startAdGuard(closeHome: boolean) {
         const placement = getAdPlacement();
-        if (this.adGuardStarted || !placement || (placement.keepControls && !closeHome)) return;
-        hideAdPlacement(placement);
+        if (this.adGuardStarted || !placement || (placement.home && !closeHome)) return;
+        if (placement.home) closeHomeAds();
+        else hideAdPlacement(placement);
         this.adGuardStarted = true;
     }
 

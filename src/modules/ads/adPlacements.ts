@@ -1,10 +1,10 @@
-import homeAdStyles from './homeAd.css';
+import { closeTargetWhenTriggerAvailableInsideContainer } from '../../dom';
 
 interface AdPlacement {
     page: string | RegExp;
     selector: string;
     clearReservedHeight?: boolean;
-    keepControls?: boolean;
+    home?: boolean;
 }
 
 const placements: AdPlacement[] = [
@@ -14,7 +14,7 @@ const placements: AdPlacement[] = [
     { page: '/champions-map.html', selector: '#ad_champions_map' },
     { page: '/god-path.html', selector: '#ad_god-path' },
     { page: /\/characters\/\d+$/, selector: '#ad_harem' },
-    { page: '/home.html', selector: '#ad_home', keepControls: true },
+    { page: /^\/(?:home\.html)?$/, selector: '#ad_home', home: true },
     { page: '/labyrinth.html', selector: '#ad_labyrinth' },
     { page: '/labyrinth-battle.html', selector: '#ad_battle' },
     { page: '/labyrinth-pre-battle.html', selector: '#ad_labyrinth-pre-battle' },
@@ -33,28 +33,32 @@ export function getAdPlacement() {
     return placements.find(({ page }) => typeof page === 'string' ? pathname.includes(page) : page.test(pathname));
 }
 
-function isMembershipBanner(placement: HTMLElement) {
-    if (!placement.querySelector('.become-member-text')) return false;
-    const actions = placement.querySelectorAll('.bottom-block-container :is(button, a, [role="button"])');
-    return actions.length === 1 && actions[0].matches('[onclick*="openBundles"][onclick*="monthly_card"]');
+export function closeHomeAds() {
+    const watch = () => {
+        for (const selector of ['#ad_home', '#crosspromo_show_ad']) {
+            closeTargetWhenTriggerAvailableInsideContainer(`${selector}:not(:has(.hard_currency_icn))`, {
+                targetSelector: ':scope > close',
+                once: false,
+                timeout: null,
+                // Give the game time to wire up the close button and render any reward.
+                delay: 500
+            });
+        }
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch, { once: true });
+    else watch();
 }
 
-export function hideAdPlacement({ selector, keepControls }: AdPlacement) {
+export function hideAdPlacement({ selector }: AdPlacement) {
     let stylesInstalled = false;
     const unload = (placement: HTMLElement) => {
-        if (keepControls && isMembershipBanner(placement)) {
-            placement.remove();
-            return;
-        }
         if (!stylesInstalled) {
             const style = document.createElement('style');
             // Places of Power calls .show() on the ad slot when opening the list.
-            style.textContent = keepControls ? homeAdStyles : `${selector} { display: none !important; }`;
+            style.textContent = `${selector} { display: none !important; }`;
             document.head.appendChild(style);
             stylesInstalled = true;
         }
-        if (keepControls) placement.classList.add('ultron-ad-media-hidden');
-
         // CSS hiding alone leaves the embedded players running.
         placement.querySelectorAll('iframe, audio, video, embed, object').forEach(media => media.remove());
     };
