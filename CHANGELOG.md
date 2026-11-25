@@ -1,5 +1,6 @@
 # Changelog
 
+- **0.4.5** Close the sliding membership ad that can appear on the homepage after claiming kobans.
 - **0.4.4** Close homepage ads through the game so it can show the next offer, and leave koban offers open.
 - **0.4.3** Keep ad banners hidden when Places of Power shows its list.
 - **0.4.2**

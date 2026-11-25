@@ -35,7 +35,11 @@ export function getAdPlacement() {
 
 export function closeHomeAds() {
     const watch = () => {
-        for (const selector of ['#ad_home', '#crosspromo_show_ad']) {
+        for (const selector of [
+            '#ad_home',
+            '#crosspromo_show_ad',
+            '#sliding-popups > #iframe_wrapper:has(> .bottom-container .remove-ads-text)'
+        ]) {
             closeTargetWhenTriggerAvailableInsideContainer(`${selector}:not(:has(.hard_currency_icn))`, {
                 targetSelector: ':scope > close',
                 once: false,
